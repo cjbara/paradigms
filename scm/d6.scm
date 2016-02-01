@@ -4,15 +4,26 @@
 
 (use-modules (ice-9 debugging traps) (ice-9 debugging trace))
 
+(define atom?
+	(lambda (x)
+		(and (not (null? x)) (not (pair? x)))))
+
 (define sum*
-  (lambda (ttup)
-    (cond
+	(lambda (ttup)
+		(cond
+			((null? ttup) 0)
+			((atom? (car ttup)) (+ (car ttup) (sum* (cdr ttup))))
+			(else (+ (sum* (car ttup)) (sum* (cdr ttup))))
+		)
+	)
+)
+
 	; YOUR CODE HERE :-)
 
 
-(install-trap (make <procedure-trap>
-                            #:procedure sum*
-                            #:behaviour (list trace-trap trace-until-exit)))
+;(install-trap (make <procedure-trap>
+;                            #:procedure sum*
+;                            #:behaviour (list trace-trap trace-until-exit)))
 
 ;; tests!
 (display (sum* '((5)) ))
