@@ -18,9 +18,6 @@
 	)
 )
 
-	; YOUR CODE HERE :-)
-
-
 ;(install-trap (make <procedure-trap>
 ;                            #:procedure sum*
 ;                            #:behaviour (list trace-trap trace-until-exit)))
