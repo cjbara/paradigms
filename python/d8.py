@@ -1,4 +1,5 @@
 # Python daily 8: string length counting
+# Cory Jbara
 
 def string_word_count(s):
 	"""Return the number of words in the string parameter s."""
