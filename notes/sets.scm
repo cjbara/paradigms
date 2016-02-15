@@ -50,11 +50,17 @@
 			((null? l) '())
 			(else 
 				(cons 
-					(cons (cdr (car l)) (cons (caar l) '()))
-					(reverseFun (cdr l))
+					(cons (reverseOrderedPair (car l))
+					(reverseFun (cdr l)))
 				)
 			)
 		)
+	)
+)
+
+(define reverseOrderedPair
+	(lambda (p)
+		((cons (car (cdr p)) (cons (car p) '())))
 	)
 )
 
