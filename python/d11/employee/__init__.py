@@ -1,1 +1,1 @@
-__all__ = ["employee"]
+from employee import *

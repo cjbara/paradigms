@@ -2,7 +2,7 @@
 
 # Name:  Cory Jbara
 import csv
-import employee.employee
+from employee import *
 
 def giveEveryoneARaise(l):
 	"""Gives everyone in l a raise of percentage"""
