@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/afs/nd.edu/user37/cmc/Public/paradigms/python/local/lib/python2.6/site-packages/requests-2.0.0-py2.6.egg')
 import requests
 import json
 
