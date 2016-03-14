@@ -5,10 +5,10 @@ class _movie_database(object):
 	"""Class that will store information about movies"""
 	
 	def __init__(self):
-		"""Initializes empty dictionaries for users, movies, and ratings"""
-		self.movies = {}
-		self.users = {}
-		self.ratings = {}
+		"""Initializes dictionaries for users, movies, and ratings"""
+                load_movies()
+                load_users()
+                load_ratings()
 
 #================ Movies Methods ====================
 	def load_movies(self):
@@ -19,15 +19,15 @@ class _movie_database(object):
 			line = line.strip()
 			line = line.split('::')
 			mid = int(line[0])
-			name = line[1]
+			title = line[1]
 			genre = line[2]
-			self.movies[mid] = { 'name': name, 'genre': genre }
+			self.movies[mid] = { 'title': title, 'genre': genre }
 		f.close()
 		
 	def get_movie(self, mid):
 		"""Returns the movie with key mid"""
 		if mid in self.movies: 
-			return [self.movies[mid]['name'], self.movies[mid]['genre']]
+                        return self.movies[mid]
 		else:
 			return None
 
@@ -37,11 +37,15 @@ class _movie_database(object):
 
 	def set_movie(self, mid, tg): #, [title, genres]):
 		"""Updates or creates new movie with attributes"""
-		self.movies[mid] = { 'name': tg[0], 'genre': tg[1] }
+		self.movies[mid] = { 'title': tg[0], 'genre': tg[1] }
 
 	def delete_movie(self, mid):
 		"""Deletes movie from db with ID = mid"""
 		if mid in self.movies: del self.movies[mid]
+
+	def delete_all_movies(self, mid):
+		"""Deletes all movies from db"""
+		self.movies = {}
 
 #================ Users Methods ====================
 	def load_users(self):
