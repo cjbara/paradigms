@@ -8,11 +8,13 @@ class MovieDatabase(object):
 		"""Initializes dictionaries for users, movies, and ratings"""
 		self.reset_movies()
 
+#================ Reset Methods ====================
 	def reset_movies(self):
 		"""Resets entire database"""
 		self.movies = {}
 		self.users = {}
 		self.ratings = {}
+		self.votes = {}
 		self.load_movies()
 		self.load_movie_images()
 		self.load_users()
@@ -21,7 +23,29 @@ class MovieDatabase(object):
 	def reset_movie(self, movie_id):
 		"""Resets one movie from dat file"""
 		movie_id = int(movie_id)
-		print movie_id
+		movie_file = 'data/movies.dat'
+		f = open(movie_file, 'r')
+		for line in f:
+			line = line.strip()
+			line = line.split('::')
+			mid = int(line[0])
+			if mid == movie_id:
+				title = line[1]
+				genres = line[2]
+				self.movies[mid] = { 'title': title, 'genres': genres }
+		f.close()
+
+		image_file = 'data/images.dat'
+		f = open(image_file, 'r')
+		for line in f:
+			line = line.strip()
+			line = line.split('::')
+			mid = int(line[0])
+			if mid == movie_id:
+				image = line[2]
+				if image == '':
+					image = 'default.jpg'
+				self.movies[mid]['img'] = image
 
 #================ Movies Methods ====================
 	def load_movies(self):
@@ -86,14 +110,13 @@ class MovieDatabase(object):
 			age = int(line[2])
 			occupation = int(line[3])
 			zipcode = line[4]
-			self.users[uid] = { 'gender': gender, 'age': age, 'occupation': occupation, 'zip': zipcode }
+			self.users[uid] = { 'gender': gender, 'age': age, 'occupation': occupation, 'zipcode': zipcode }
 		f.close()
 
 	def get_user(self, uid):
 		"""Returns the user with key uid"""
 		if uid in self.users: 
-			u = self.users[uid]
-			return [u['gender'], u['age'], u['occupation'], u['zip']]
+			return self.users[uid]
 		else:
 			return None
 
@@ -107,8 +130,11 @@ class MovieDatabase(object):
 		age = params[1]
 		occupation = params[2]
 		zipcode = params[3]
-		print zipcode
-		self.users[uid] = {'gender': gender, 'age': age, 'occupation': occupation, 'zip': zipcode }
+		self.users[uid] = {'gender': gender, 'age': age, 'occupation': occupation, 'zipcode': zipcode }
+
+	def delete_all_users(self):
+		"""Deletes all users from db"""
+		self.users = {}
 
 	def delete_user(self, uid):
 		"""Deletes user from db with ID = uid"""
@@ -143,18 +169,52 @@ class MovieDatabase(object):
 		else:
 			return 0
 
-	def get_highest_rated_movie(self):
+#================ Recommendations Methods ====================
+	def get_recommendation(self, user_id):
+		"""Gets a recommendation for a particular user"""
+		if self.get_user(user_id) == None:
+			return None
+
+		movies = self.movies.keys() 
+		if user_id not in self.votes.keys():
+			return self.get_highest_rated_movie(movies)
+
+		while len(movies) > 0:
+			best_movie = self.get_highest_rated_movie(movies)
+			if best_movie in self.votes[user_id].keys():
+				movies.remove(best_movie)
+			else:
+				return best_movie
+		return 0
+
+	def set_recommendation(self, user_id, attributes): #[movie_id, rating]
+		"""Sets a recommendation in votes"""
+		movie_id = attributes[0]
+		rating = attributes[1]
+		if user_id in self.votes.keys():
+			self.votes[user_id][movie_id] = rating
+			self.ratings[movie_id][user_id] = rating
+		else:
+			self.votes[user_id] = { movie_id: rating }
+			self.ratings[movie_id][user_id] = rating
+
+	def delete_all_recommendations(self):
+		"""Deletes the votes dictionary"""
+		self.votes = {}
+
+	def get_highest_rated_movie(self, remaining_movies):
 		"""Returns ID of the movie with the highest rating"""
 		movies = {}
 		m = 0
-		for mid in self.movies.keys():
+		for mid in remaining_movies:
 			movies[mid] = self.get_rating(mid)
 			for rating in movies:
 				if movies[rating] > m:
 					m = rating
+		print max(movies.values())
 		for mid in movies.keys():
 			if movies[mid] == m:
-				return mid
+				print mid
 
 	def set_user_movie_rating(self, uid, mid, rating):
 		"""Updates or creates new rating for mid by uid"""

@@ -9,16 +9,23 @@ class MoviesController(object):
 
 	def GET_ALL_MOVIES(self):
 		output = {'result': 'success'}
-		output['entries'] = []
-		for key in self.db.get_movies():
-			output['entries'].append(self.GET_MOVIE_BY_ID(key))
+		output['movies'] = []
+		for movie_id in self.db.get_movies():
+			value = self.db.get_movie(movie_id)
+			if value == None:
+				value = {}
+				value['result'] = 'error'
+				value['message'] = 'movie not found'
+			else:
+				value['result'] = 'success'
+				value['id'] = movie_id
+			output['movies'].append(value)
 		return json.dumps(output, encoding='latin-1')
 
 	def GET_MOVIE_BY_ID(self, movie_id):
 		output = {}
 		movie_id = int(movie_id)
 		value = self.db.get_movie(movie_id)
-		print value
 		if value == None:
 			output['result'] = 'error'
 			output['message'] = 'movie not found'
@@ -62,7 +69,7 @@ class MoviesController(object):
 				new_id = max(self.db.get_movies()) + 1
 			attributes = []
 			attributes.append(processed_data['title'])
-			attributes.append(processed_data['genre'])
+			attributes.append(processed_data['genres'])
 			attributes.append(processed_data['apikey'])
 				
 			self.db.set_movie(new_id, attributes)
@@ -70,7 +77,7 @@ class MoviesController(object):
 						
 		except Exception as ex:
 			output['result'] = 'error'
-			output['message'] = 'bad parameters, must include genre, title, and apikey'
+			output['message'] = 'bad parameters, must include genres, title, and apikey'
 		return json.dumps(output, encoding='latin-1')
 		
 	def PUT_NEW_MOVIE(self, movie_id):
@@ -82,11 +89,11 @@ class MoviesController(object):
 		try:
 			attributes = []
 			attributes.append(processed_data['title'])
-			attributes.append(processed_data['genre'])
+			attributes.append(processed_data['genres'])
 			attributes.append(processed_data['apikey'])
 				
 			self.db.set_movie(movie_id, attributes)
 		except Exception as ex:
 			output['result'] = 'error'
-			output['message'] = 'bad parameters, must include genre, title, and apikey'
+			output['message'] = 'bad parameters, must include genres, title, and apikey'
 		return json.dumps(output, encoding='latin-1')
