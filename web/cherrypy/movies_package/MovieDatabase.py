@@ -14,7 +14,6 @@ class MovieDatabase(object):
 		self.movies = {}
 		self.users = {}
 		self.ratings = {}
-		self.votes = {}
 		self.load_movies()
 		self.load_movie_images()
 		self.load_users()
@@ -175,32 +174,15 @@ class MovieDatabase(object):
 		if self.get_user(user_id) == None:
 			return None
 
-		movies = self.movies.keys() 
-		if user_id not in self.votes.keys():
-			return self.get_highest_rated_movie(movies)
+		movies = self.ratings
+		for movie_id in movies.keys():
+			if user_id in self.ratings[movie_id].keys():
+				del movies[movie_id]
 
-		while len(movies) > 0:
-			best_movie = self.get_highest_rated_movie(movies)
-			if best_movie in self.votes[user_id].keys():
-				movies.remove(best_movie)
-			else:
-				return best_movie
+		if len(movies.keys()) > 0:
+			best_movie = self.get_highest_rated_movie(movies.keys())
+			return best_movie
 		return 0
-
-	def set_recommendation(self, user_id, attributes): #[movie_id, rating]
-		"""Sets a recommendation in votes"""
-		movie_id = attributes[0]
-		rating = attributes[1]
-		if user_id in self.votes.keys():
-			self.votes[user_id][movie_id] = rating
-			self.ratings[movie_id][user_id] = rating
-		else:
-			self.votes[user_id] = { movie_id: rating }
-			self.ratings[movie_id][user_id] = rating
-
-	def delete_all_recommendations(self):
-		"""Deletes the votes dictionary"""
-		self.votes = {}
 
 	def get_highest_rated_movie(self, remaining_movies):
 		"""Returns ID of the movie with the highest rating"""
@@ -208,13 +190,20 @@ class MovieDatabase(object):
 		m = 0
 		for mid in remaining_movies:
 			movies[mid] = self.get_rating(mid)
-			for rating in movies:
-				if movies[rating] > m:
-					m = rating
-		print max(movies.values())
+		m = max(movies.values())
 		for mid in movies.keys():
 			if movies[mid] == m:
-				print mid
+				return mid
+
+	def delete_all_recommendations(self):
+		"""Deletes the ratings dictionary"""
+		self.ratings = {}
+
+	def set_recommendation(self, user_id, attributes): #[movie_id, rating]
+		"""Sets a rating"""
+		movie_id = attributes[0]
+		rating = attributes[1]
+		self.set_user_movie_rating(user_id, movie_id, rating)
 
 	def set_user_movie_rating(self, uid, mid, rating):
 		"""Updates or creates new rating for mid by uid"""

@@ -13,7 +13,7 @@ class TestRatings(unittest.TestCase):
 	def reset_data(self):
 		m = {}
 		m['apikey'] = 'AAAAAAAB'
-		r = requests.put(self.RESET_URL)
+		r = requests.put(self.RESET_URL, data = m)
 
 	def is_json(self, resp):
 		try:
