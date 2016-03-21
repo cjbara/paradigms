@@ -1,3 +1,4 @@
+//Name: Cory Jbara
 var p = document.createElement("p");
 p.setAttribute("id", "nameLabel");
 var text = document.createTextNode("Who?");
