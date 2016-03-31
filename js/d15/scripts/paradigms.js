@@ -54,7 +54,7 @@ function Dropdown() {
 		var options = this.item.options.length;
 		for( var i = 0; i < options; i++ ) {
 			if( this.item.options[i].selected == true ) {
-				console.log( i + 1 );
+				return ( i + 1 );
 			}
 		}
 	}
