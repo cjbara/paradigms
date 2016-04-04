@@ -3,6 +3,7 @@
 //Create the variables
 var user_id = 4;
 var image_path = "http://www.cse.nd.edu/~cmc/teaching/cse30332_sp16/images";
+var request_path = "http://student00.cse.nd.edu:40062";
 var movie_id = 0;
 
 //Set up the inheritance
@@ -24,7 +25,7 @@ div = new Div();
 function getNewMovie(args) {
 	console.log("Getting new movie");
 	var req = new XMLHttpRequest();
-	req.open("GET", "http://student02.cse.nd.edu:40001/recommendations/"+user_id, true);
+	req.open("GET", request_path+"/recommendations/"+user_id, true);
 	req.onload = function() {
 		var response = JSON.parse(req.response);
 		movie_id = response["movie_id"];
@@ -37,7 +38,7 @@ function getNewMovie(args) {
 function getMovieInfo(args){
 	console.log("Getting info for movie "+movie_id);
 	var req = new XMLHttpRequest();
-	req.open("GET", "http://student02.cse.nd.edu:40001/movies/"+movie_id, true);
+	req.open("GET", request_path+"/movies/"+movie_id, true);
 	req.onload = function() {
 		var response = JSON.parse(req.response);
 		args[0].setText(response["title"]);
@@ -51,7 +52,7 @@ function getMovieInfo(args){
 function getMovieRating(args){
 	console.log("Getting rating for movie "+movie_id);
 	var req = new XMLHttpRequest();
-	req.open("GET", "http://student02.cse.nd.edu:40001/ratings/"+movie_id, true);
+	req.open("GET", request_path+"/ratings/"+movie_id, true);
 	req.onload = function() {
 		var response = JSON.parse(req.response);
 		args[1].setText(Number(response["rating"]).toFixed(3));
@@ -63,7 +64,7 @@ function getMovieRating(args){
 function rateMovie(args) {
 	console.log("Rating movie "+movie_id+" with a rating of "+args[4]);
 	var req = new XMLHttpRequest();
-	req.open("PUT", "http://student02.cse.nd.edu:40001/recommendations/"+user_id, true);
+	req.open("PUT", request_path+"/recommendations/"+user_id, true);
 	req.onload = function() {
 		console.log("Added rating to db");
 		getNewMovie(args);

@@ -6,13 +6,14 @@ function Item() {
 		document.body.appendChild(this.item);
 	}
 
+	this.addClass = function(className) {
+		this.item.setAttribute("class", className);
+	}
+
 	this.addToNode = function(node) {
 		node.item.appendChild(this.item);
 	}
 
-	this.addClass = function(className) {
-		this.item.setAttribute("class", className);
-	}
 }
 
 //Label object (inherits from Item)
