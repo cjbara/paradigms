@@ -5,6 +5,14 @@ function Item() {
 	this.addToDocument = function() {
 		document.body.appendChild(this.item);
 	}
+
+	this.addToNode = function(node) {
+		node.item.appendChild(this.item);
+	}
+
+	this.addClass = function(className) {
+		this.item.setAttribute("class", className);
+	}
 }
 
 //Label object (inherits from Item)
@@ -62,12 +70,20 @@ function Dropdown() {
 
 //Image Object
 function Image() {
-	this.createImage = function(path, id) {
+	this.createImage = function(id) {
 		this.item = document.createElement("img");
 		this.item.setAttribute("id", id);
 	}
 
 	this.setImage = function(path) {
 		this.item.setAttribute("src", path);
+	}
+}
+
+//Div Object
+function Div() {
+	this.createDiv = function(className) {
+		this.item = document.createElement("div");
+		this.addClass(className);
 	}
 }

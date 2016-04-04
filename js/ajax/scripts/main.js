@@ -10,6 +10,7 @@ Button.prototype = new Item();
 Label.prototype = new Item();
 Dropdown.prototype = new Item();
 Image.prototype = new Item();
+Div.prototype = new Item();
 
 //Instantiate the four objects
 upButton = new Button();
@@ -17,6 +18,7 @@ downButton = new Button();
 titleLabel = new Label();
 ratingLabel = new Label();
 image = new Image();
+div = new Div();
 
 //Function gets a new movie then fills the appropriate html info
 function getNewMovie(args) {
@@ -73,20 +75,30 @@ function rateMovie(args) {
 //Create elements
 titleLabel.createLabel("Title", "titleLabel");
 ratingLabel.createLabel("Rating", "ratingLabel");
-upButton.createButton("Up", "upButton");
-downButton.createButton("Down", "downButton");
+upButton.createButton("UP", "upButton");
+downButton.createButton("DOWN", "downButton");
 image.createImage("image");
+div.createDiv("hContainer");
+
+//Add classes
+titleLabel.addClass("item");
+ratingLabel.addClass("item");
+upButton.addClass("item");
+downButton.addClass("item");
+image.addClass("item");
 
 //Set up buttons handlers
 args = [ titleLabel, ratingLabel, image, image_path ];
 upButton.addClickEventHandler(rateMovie, args.concat([5]));
 downButton.addClickEventHandler(rateMovie, args.concat([1]));
 
-//Add label and button to document
+//Add elements to document
 titleLabel.addToDocument();
-upButton.addToDocument();
-image.addToDocument()
-downButton.addToDocument();
+div.addToDocument();
 ratingLabel.addToDocument();
+
+upButton.addToNode(div);
+image.addToNode(div)
+downButton.addToNode(div);
 
 getNewMovie(args);

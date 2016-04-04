@@ -1,1 +1,26 @@
 //Name: Cory Jbara
+
+.hContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
+.hContainer {
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	align-items: center;
+	height: 300px;
+	width: 100%;
+}
+
+.item {
+	margin: auto;
+}
+
+p {
+	text-align: center;
+}
