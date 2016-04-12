@@ -10,11 +10,13 @@ class Explosion(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
 
-		self.framesPerImage = 2
+		self.framesPerImage = 5
 		self.counter = 0
 		self.index = 0
 		self.completed = False
 
+                pygame.mixer.init()
+                self.explosionSound = pygame.mixer.Sound("media/explode.wav")
 		self.explosions = []
 		for x in range(0, 16):
 			if x < 10:
@@ -28,6 +30,7 @@ class Explosion(pygame.sprite.Sprite):
 		self.rect.center = (self.gs.width * .6, self.gs.height * .8)
 
 	def tick(self):
+                self.explosionSound.play()
 		self.counter += 1
 		if self.counter >= self.framesPerImage:
 			self.counter = 0
@@ -36,3 +39,4 @@ class Explosion(pygame.sprite.Sprite):
 				self.image = self.explosions[self.index]
 			else:
 				self.completed = True
+                #                self.explosionSound.stop()

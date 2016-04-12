@@ -25,7 +25,7 @@ class Earth(pygame.sprite.Sprite):
 		for x in self.gs.lasers:
 			if pygame.sprite.collide_circle(self, x):
 				self.gs.lasers.remove(x)
-				self.damage -= 10
+				self.damage -= 5
 		
 		if self.damage <= 30:
 			self.image = self.damaged_image

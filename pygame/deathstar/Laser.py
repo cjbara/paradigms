@@ -15,7 +15,7 @@ class Laser(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 		self.radius = self.rect.height / 2
 
-		self.vel = 10
+		self.vel = 5
 		(self.xpos, self.ypos) = self.gs.deathstar.rect.center
 		self.xpos += 37*math.sin(self.gs.deathstar.angle)
 		self.ypos += 37*math.cos(self.gs.deathstar.angle)
