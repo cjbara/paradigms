@@ -15,7 +15,7 @@ class Earth(pygame.sprite.Sprite):
 		self.damaged_image = pygame.image.load("media/globe_red100.png")
 		self.empty_image = pygame.image.load("media/empty.png")
 		self.rect = self.orig_image.get_rect()
-		self.radius = self.rect.width / 2.1
+		self.radius = self.rect.width / 2.25
 
 		self.rect.center = (self.gs.width * .8, self.gs.height)
 		self.image = self.orig_image
