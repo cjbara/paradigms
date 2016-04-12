@@ -10,8 +10,8 @@ class DeathStar(pygame.sprite.Sprite):
 		#initialize the object
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
-		#pygame.mixer.init()
-		#self.laserNoise = pygame.mixer.Sound("media/screammachine.wav")
+		pygame.mixer.init()
+		self.laserNoise = pygame.mixer.Sound(os.path.join("media", "screammachine.wav"))
 
 		#Create the original image and the rectangle it is in
 		self.orig_image = pygame.image.load("media/deathstar.png")
@@ -72,7 +72,7 @@ class DeathStar(pygame.sprite.Sprite):
 		#if self.shooting is true, add a new laser to the object pool
 		if self.shooting == True:
 			self.gs.lasers.append(Laser(self.gs))
-			#self.laserNoise.play()
+			self.laserNoise.play()
 		
 		#calculate the new angle
 		self.angle = math.atan2(mx - cx, my - cy)

@@ -25,7 +25,6 @@ class Earth(pygame.sprite.Sprite):
 		for x in self.gs.lasers:
 			if pygame.sprite.collide_circle(self, x):
 				self.gs.lasers.remove(x)
-				print "hit!"
 				self.damage -= 10
 		
 		if self.damage <= 30:
