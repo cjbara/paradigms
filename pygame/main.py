@@ -19,6 +19,7 @@ class GameSpace(object):
 		self.lasers = []
 		self.deathstar = DeathStar(self)
 		self.earth = Earth(self)
+		self.explosion = Explosion(self)
 
 	def main(self):
 		#3 Start game loop
@@ -31,7 +32,12 @@ class GameSpace(object):
 
 			#6 tick() all objects
 			self.deathstar.tick()
-			self.earth.tick()
+			
+			if self.earth.exploded == False:
+				self.earth.tick()
+			else:
+				if self.explosion.completed == False:
+					self.explosion.tick()
 			for x in self.lasers:
 				x.tick()
 
@@ -40,7 +46,11 @@ class GameSpace(object):
 			self.screen.blit(self.deathstar.image, self.deathstar.rect)
 			for x in self.lasers:
 				self.screen.blit(x.image, x.rect)
-			self.screen.blit(self.earth.image, self.earth.rect)
+			if self.earth.exploded == False:
+				self.screen.blit(self.earth.image, self.earth.rect)
+			else:
+				if self.explosion.completed == False:
+					self.screen.blit(self.explosion.image, self.explosion.rect)
 			pygame.display.flip()
 
 if __name__ == '__main__':
