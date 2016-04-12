@@ -1,31 +1,48 @@
 import sys
 import os
+import math
 import pygame
 from pygame.locals import *
-
-class DeathStar(pygame.sprite.Sprite):
-    def __init__(self, gs=None):
-        pygame.sprite.Sprite.__init__(self)
-        self.gs = gs
-        self.image = pygame.image.load("deathstar.png")
-        self.rect = self.image.get_rect()
-        self.orig_image = self.image
+from deathstar import *
 
 class GameSpace(object):
-    def __init__(self):
-        pygame.init()
-        self.size = self.width, self.height = (640, 480)
-        self.black = (0,0,0)
+	def __init__(self):
+		#1 Initialize game space
+		pygame.init()
+		pygame.key.set_repeat(1,10)
+		self.size = self.width, self.height = (640, 480)
+		self.black = (0,0,0)
+		self.screen = pygame.display.set_mode(self.size)
+		self.clock = pygame.time.Clock()
 
-        self.screen = pygame.display.set_mode(self.size)
-        self.clock = pygame.time.Clock()
-        
-    def main(self):
-        while(1):
-            self.clock.tick(60)
-            self.screen.fill(self.black)
-            pygame.display.flip()
+		#2 Initialize game objects
+		self.lasers = []
+		self.deathstar = DeathStar(self)
+		self.earth = Earth(self)
+
+	def main(self):
+		#3 Start game loop
+		while(1):
+			#4 Tick regulation
+			self.clock.tick(60)
+
+			#5 Read User Input
+			self.deathstar.handleInput()
+
+			#6 tick() all objects
+			self.deathstar.tick()
+			self.earth.tick()
+			for x in self.lasers:
+				x.tick()
+
+			#7 Update screen display
+			self.screen.fill(self.black)
+			self.screen.blit(self.deathstar.image, self.deathstar.rect)
+			for x in self.lasers:
+				self.screen.blit(x.image, x.rect)
+			self.screen.blit(self.earth.image, self.earth.rect)
+			pygame.display.flip()
 
 if __name__ == '__main__':
-    game = GameSpace()
-    game.main()
+	game = GameSpace()
+	game.main()
