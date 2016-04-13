@@ -5,7 +5,7 @@ import pygame
 from pygame.locals import *
 
 class Laser(pygame.sprite.Sprite):
-	def __init__(self, gs=None):
+	def __init__(self, angle, center, gs=None):
 		#initialize the object
 		pygame.sprite.Sprite.__init__(self)
 		self.gs = gs
@@ -16,12 +16,12 @@ class Laser(pygame.sprite.Sprite):
 		self.radius = self.rect.height / 2
 
 		self.vel = 5
-		(self.xpos, self.ypos) = self.gs.deathstar.rect.center
-		self.xpos += 37*math.sin(self.gs.deathstar.angle)
-		self.ypos += 37*math.cos(self.gs.deathstar.angle)
+		(self.xpos, self.ypos) = center
+		self.xpos += 37*math.sin(angle)
+		self.ypos += 37*math.cos(angle)
 		self.rect.center = (self.xpos, self.ypos)
-		self.xvel = self.vel * math.sin(self.gs.deathstar.angle)
-		self.yvel = self.vel * math.cos(self.gs.deathstar.angle)
+		self.xvel = self.vel * math.sin(angle)
+		self.yvel = self.vel * math.cos(angle)
 
 	def tick(self):
 		self.xpos += self.xvel

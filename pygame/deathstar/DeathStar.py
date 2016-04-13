@@ -30,31 +30,6 @@ class DeathStar(pygame.sprite.Sprite):
 		for x in range(0,360):
 			self.rotated_images.append(self.rot_center(self.orig_image, x))
 
-	def handleInput(self):
-		for event in pygame.event.get():
-			#if the user clicks the x
-			if event.type == pygame.QUIT:
-				pygame.quit()
-				sys.exit(0)
-			#if the user presses an arrow key
-			elif event.type == pygame.KEYDOWN:
-				if event.key == K_LEFT:
-					self.move('left')
-				elif event.key == K_RIGHT:
-					self.move('right')
-				elif event.key == K_UP:
-					self.move('up')
-				elif event.key == K_DOWN:
-					self.move('down')
-                                elif event.key == K_r:
-                                        self.gs.__init__()
-			#mouse down
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				self.changeLaser(True)
-			#mouse up
-			elif event.type == pygame.MOUSEBUTTONUP:
-				self.changeLaser(False)
-
 	def move(self, direction):
 		"""Function to handle movement from input"""
 		(x, y) = self.rect.center
@@ -73,7 +48,8 @@ class DeathStar(pygame.sprite.Sprite):
 
 		#if self.shooting is true, add a new laser to the object pool
 		if self.shooting == True:
-			self.gs.lasers.append(Laser(self.gs))
+                        l = Laser(self.angle, self.rect.center, self.gs)
+			self.gs.lasers.append(l)
 			self.laserNoise.play()
                 else:
                     self.laserNoise.stop()
