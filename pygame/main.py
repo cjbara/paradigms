@@ -28,7 +28,7 @@ class GameSpace(object):
 			self.clock.tick(60)
 
 			#5 Read User Input
-			self.deathstar.handleInput()
+			self.handleInput()
 
 			#6 tick() all objects
 			self.deathstar.tick()
@@ -52,6 +52,31 @@ class GameSpace(object):
 				if self.explosion.completed == False:
 					self.screen.blit(self.explosion.image, self.explosion.rect)
 			pygame.display.flip()
+
+        def handleInput(self):
+                for event in pygame.event.get():
+                        #if the user clicks the x
+                        if event.type == pygame.QUIT:
+                                pygame.quit()
+                                sys.exit(0)
+                        #if the user presses an arrow key
+                        elif event.type == pygame.KEYDOWN:
+                                if event.key == K_LEFT:
+                                        self.deathstar.move('left')
+                                elif event.key == K_RIGHT:
+                                        self.deathstar.move('right')
+                                elif event.key == K_UP:
+                                        self.deathstar.move('up')
+                                elif event.key == K_DOWN:
+                                        self.deathstar.move('down')
+                                elif event.key == K_r:
+                                        self.__init__()
+                        #mouse down
+                        elif event.type == pygame.MOUSEBUTTONDOWN:
+                                self.deathstar.changeLaser(True)
+                        #mouse up
+                        elif event.type == pygame.MOUSEBUTTONUP:
+                                self.deathstar.changeLaser(False)
 
 if __name__ == '__main__':
 	game = GameSpace()
