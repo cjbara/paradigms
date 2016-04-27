@@ -4,7 +4,6 @@
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
-from twisted.protocols.basic import LineReceiver
 from twisted.internet.tcp import Port
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
@@ -25,7 +24,7 @@ class Work(object):
 		reactor.run()
 
 #======================================================================
-class CommandConnToHome(LineReceiver):
+class CommandConnToHome(Protocol):
 	def __init__(self, addr, work):
 		self.addr = addr
 		self.work = work
@@ -49,7 +48,7 @@ class CommandConnToHomeFactory(ClientFactory):
 		return CommandConnToHome(addr, self.work)
 
 #======================================================================
-class DataConnToHome(LineReceiver):
+class DataConnToHome(Protocol):
 	def __init__(self, addr, work):
 		self.addr = addr
 		self.work = work
@@ -58,7 +57,7 @@ class DataConnToHome(LineReceiver):
 		print 'Data connection made to HOME'
 		# Add callback then connect to the student server
 		self.work.home_queue.get().addCallback(self.sendToHome)
-		reactor.connectTCP(self.work.student_server, self.work.student_port, ConnToStudentFactory(self.work))
+		reactor.connectTCP(self.work.student_server, self.work.student_port, ConnToStudentFactory(self.work, self))
 
 	def connectionLost(self, reason):
 		print 'Data connection lost to HOME'
@@ -69,7 +68,7 @@ class DataConnToHome(LineReceiver):
 
 	def sendToHome(self, data):
 		print 'Sending data to HOME'
-		self.sendLine(data)
+		self.transport.write(data)
 		self.work.home_queue.get().addCallback(self.sendToHome)
 
 #======================================================================
@@ -82,9 +81,10 @@ class DataConnToHomeFactory(ClientFactory):
 
 #======================================================================
 class ConnToStudent(Protocol):
-	def __init__(self, addr, work):
+	def __init__(self, addr, work, dataConn):
 		self.addr = addr
 		self.work = work
+		self.dataConn = dataConn
 
 	def connectionMade(self):
 		print 'Connection made to STUDENT'
@@ -93,6 +93,7 @@ class ConnToStudent(Protocol):
 
 	def connectionLost(self, reason):
 		print 'Connection lost to STUDENT'
+		self.dataConn.transport.loseConnection()
 
 	def dataReceived(self, data):
 		"""Data received back from the student machine, forward to home"""
@@ -105,11 +106,12 @@ class ConnToStudent(Protocol):
 
 #======================================================================
 class ConnToStudentFactory(ClientFactory):
-	def __init__(self, work):
+	def __init__(self, work, dataConn):
 		self.work = work
+		self.dataConn = dataConn
 
 	def buildProtocol(self, addr):
-		return ConnToStudent(addr, self.work)
+		return ConnToStudent(addr, self.work, self.dataConn)
 
 if __name__ == '__main__':
 	work = Work()

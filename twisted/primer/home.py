@@ -4,7 +4,6 @@
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
-from twisted.protocols.basic import LineReceiver
 from twisted.internet.tcp import Port
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
@@ -14,10 +13,10 @@ class Home(object):
 	def __init__(self):
 		self.client_server = 'localhost'
 		self.client_port = 9452
-		self.work_server = 'student00.cse.nd.edu'
 		self.work_port_1 = 40062
 		self.work_port_2 = 41062
 		self.client_queue = DeferredQueue()
+		self.work_command_queue = DeferredQueue()
 		self.work_queue = DeferredQueue()
 
 	def listen(self):
@@ -34,7 +33,7 @@ class CommandConnToWork(Protocol):
 	def connectionMade(self):
 		print 'Command connection received from WORK'
 		# Add callback
-		self.home.work_queue.get().addCallback(self.makeDataConnectionToWork)
+		self.home.work_command_queue.get().addCallback(self.makeDataConnectionToWork)
 		reactor.listenTCP(self.home.work_port_2, DataConnToWorkFactory(self.home))
 
 	def connectionLost(self, reason):
@@ -46,6 +45,7 @@ class CommandConnToWork(Protocol):
 
 	def makeDataConnectionToWork(self, data):
 		self.transport.write(data)
+		self.home.work_command_queue.get().addCallback(self.makeDataConnectionToWork)
 
 #======================================================================
 class CommandConnToWorkFactory(Factory):
@@ -63,7 +63,6 @@ class DataConnToWork(Protocol):
 
 	def connectionMade(self):
 		print 'Data connection received from WORK'
-		# Add callback
 		self.home.work_queue.get().addCallback(self.sendToWork)
 
 	def connectionLost(self, reason):
@@ -87,7 +86,7 @@ class DataConnToWorkFactory(ClientFactory):
 		return DataConnToWork(addr, self.home)
 
 #======================================================================
-class ConnToClient(LineReceiver):
+class ConnToClient(Protocol):
 	def __init__(self, addr, home):
 		self.addr = addr
 		self.home = home
@@ -95,8 +94,8 @@ class ConnToClient(LineReceiver):
 	def connectionMade(self):
 		print 'Connection received from CLIENT'
 		# Add callback then connect to the work server
-		self.home.work_queue.put('Connect now')
 		self.home.client_queue.get().addCallback(self.sendToClient)
+		self.home.work_command_queue.put('Connect now')
 
 	def connectionLost(self, reason):
 		print 'Connection lost from CLIENT'
@@ -107,7 +106,7 @@ class ConnToClient(LineReceiver):
 
 	def sendToClient(self, data):
 		print 'Sending data to CLIENT'
-		self.sendLine(data)
+		self.transport.write(data)
 		self.home.client_queue.get().addCallback(self.sendToClient)
 
 #======================================================================
